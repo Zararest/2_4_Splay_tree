@@ -2,7 +2,7 @@
 
 #define MAXLEN 100
 
-class Test_tree{
+class Test_tree final{
 
     FILE* input_file = nullptr;
     FILE* request_file = nullptr;

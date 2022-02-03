@@ -46,9 +46,17 @@ public:
 
         return node_key < right_node.node_key;
     }
+    bool operator <=(const Node& right_node) const{
+
+        return node_key <= right_node.node_key;
+    }
     bool operator >(const Node& right_node) const{
 
         return node_key > right_node.node_key;
+    }
+    bool operator >=(const Node& right_node) const{
+
+        return node_key >= right_node.node_key;
     }
     bool operator ==(const Node& right_node) const{
 
@@ -109,6 +117,8 @@ public:
 class Splay_tree final{
     
     Node* root = nullptr;
+    int num_of_smaller_elems = 0;
+    int num_of_greater_elems = 0;
 
     int choose_rootation(Node* cur_node);
 
@@ -119,8 +129,7 @@ class Splay_tree final{
     bool left_zig_zag(Node* cur_node);
     bool right_zig_zag(Node* cur_node);
 
-    Node* find_first_less(T_key new_key);
-    Node* find_first_greater(T_key new_key);
+    void pull_node_up(Node* cur_node);
     Node* find_nearest(T_key new_key);
 
     bool check_sub_tree(Node* cur_node);
@@ -140,5 +149,6 @@ public:
     void add_new_elem(T_key new_elem);
     bool find_elem(T_key elem);
     int number_of_elems(int from, int to); 
+    void dump_graphviz(const char* out_name);
 };
 
