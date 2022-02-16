@@ -398,7 +398,7 @@ void Splay_tree::pull_node_up(Node* cur_node){
 
     root = cur_node;
 
-    dump_graphviz("../bin/graph.dot");
+    //dump_graphviz("../bin/graph.dot");
 }
 
 Node* Splay_tree::find_nearest(T_key new_key){
@@ -438,6 +438,9 @@ Node* Splay_tree::find_nearest(T_key new_key){
         }
     }
 
+    num_of_greater_elems += cur_node->get_right_tree_size();
+    num_of_smaller_elems += cur_node->get_left_tree_size();   
+    
     return cur_node;
 }
 

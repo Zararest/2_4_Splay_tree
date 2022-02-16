@@ -63,6 +63,48 @@ BOOST_AUTO_TEST_CASE(range_find){
     BOOST_REQUIRE_EQUAL(diff_ret, 0);
 }
 
+BOOST_AUTO_TEST_CASE(range_find_2){
+
+    char input_name[MAXLEN] = {"../bin/range_find_2/input_range_2"};
+    char out_name[MAXLEN] = {"../bin/range_find_2/out_range_2"};
+
+    Test_tree range_test(input_name, "../bin/range_find_2/requests_range_2", "../bin/range_find_2/ans_range_2");
+
+    range_test.range_requests(out_name);
+
+    int diff_ret = std::system("diff ../bin/range_find_2/ans_range_2 ../bin/range_find_2/out_range_2 > ../bin/out");
+
+    BOOST_REQUIRE_EQUAL(diff_ret, 0);
+}
+
+BOOST_AUTO_TEST_CASE(range_find_3){
+
+    char input_name[MAXLEN] = {"../bin/range_find_3/input_range_3"};
+    char out_name[MAXLEN] = {"../bin/range_find_3/out_range_3"};
+
+    Test_tree range_test(input_name, "../bin/range_find_3/requests_range_3", "../bin/range_find_3/ans_range_3");
+
+    range_test.range_requests(out_name);
+
+    int diff_ret = std::system("diff ../bin/range_find_3/ans_range_3 ../bin/range_find_3/out_range_3 > ../bin/out");
+
+    BOOST_REQUIRE_EQUAL(diff_ret, 0);
+}
+
+BOOST_AUTO_TEST_CASE(range_find_4){
+
+    char input_name[MAXLEN] = {"../bin/range_find_4/input_range_4"};
+    char out_name[MAXLEN] = {"../bin/range_find_4/out_range_4"};
+
+    Test_tree range_test(input_name, "../bin/range_find_4/requests_range_4", "../bin/range_find_4/ans_range_4");
+
+    range_test.range_requests(out_name);
+
+    int diff_ret = std::system("diff ../bin/range_find_4/ans_range_4 ../bin/range_find_4/out_range_4 > ../bin/out");
+
+    BOOST_REQUIRE_EQUAL(diff_ret, 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 
