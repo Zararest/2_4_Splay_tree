@@ -1,5 +1,7 @@
 #include "Splay_tree.h"
 
+#include <set>
+
 #define MAXLEN 100
 
 class Test_tree final{
@@ -9,6 +11,7 @@ class Test_tree final{
     FILE* answers_file = nullptr;
 
     Splay_tree tree;
+    std::set<T_key> set;
 
 public:
 

@@ -1,6 +1,7 @@
 #include "headers/Test.h"
 
 #include <cassert>
+#include <ctime>
 
 Test_tree::Test_tree(const char* input_name, const char* request_name, const char* answers_name){
 
@@ -17,6 +18,7 @@ Test_tree::Test_tree(const char* input_name, const char* request_name, const cha
     while ((scan_ret = fscanf(input_file, "%d", &tmp_elem)) > 0){
 
         tree.add_new_elem(tmp_elem);
+        set.insert(tmp_elem);
     }
 }
 
@@ -97,5 +99,54 @@ void Test_tree::move_assign(const char* out_name){
     }
 
     fclose(out_file);
+}
+
+long Test_tree::splay_tree_time(const char* out_name){
+
+    FILE* out_file = fopen(out_name, "w");
+    assert(out_file != nullptr);
+
+    int left_elem = 0, right_elem = 0;
+    long start_time = clock(), end_time = 0;
+    
+    while (fscanf(request_file, "%d %d", &left_elem, &right_elem) > 0){
+
+        fprintf(out_file, "%i\n", tree.number_of_elems(left_elem, right_elem));
+    }
+
+    end_time = clock();
+
+    fclose(out_file);
+
+    return end_time - start_time;
+}
+
+long Test_tree::set_time(const char* out_name){
+
+    FILE* out_file = fopen(out_name, "w");
+    assert(out_file != nullptr);
+
+    std::set<T_key>::iterator end = set.end();
+    int left_elem = 0, right_elem = 0, number_of_elems = 0;
+    long start_time = clock(), end_time = 0;
+
+    fseek(request_file, 0, SEEK_SET);
+    while (fscanf(request_file, "%d %d", &left_elem, &right_elem) > 0){
+        
+        number_of_elems = 0;
+
+        for (int i = left_elem; i <= right_elem; i++){
+
+            if (set.find(i) != end){ number_of_elems++; }
+        }
+
+        fprintf(out_file, "%i\n", number_of_elems);
+    }
+
+    end_time = clock();
+
+    fclose(out_file);
+
+    return end_time - start_time;
 }
 

@@ -64,42 +64,6 @@ Node* Node::copy_tree(Node* old_tree){
     return new_tree_root;
 }
 
-Node::~Node(){
-
-    Node* cur_node = this;
-    cur_node->prev = nullptr;
-
-    if (cur_node != nullptr){
-
-        while ((cur_node->left != nullptr) || (cur_node->right != nullptr) || (cur_node->prev != nullptr)){
-
-            if (cur_node->left != nullptr){
-
-                cur_node = cur_node->left;
-            } else{
-
-                if (cur_node->right != nullptr){
-
-                    cur_node = cur_node->right;
-                } else{
-
-                    if (cur_node->prev->right == cur_node){
-
-                        cur_node = cur_node->prev;
-                        delete cur_node->right;
-                        cur_node->right = nullptr;
-                    } else{
-                        
-                        cur_node = cur_node->prev;
-                        delete cur_node->left;
-                        cur_node->left = nullptr;
-                    }
-                }
-            }
-        }
-    }
-}
-
 Node* Node::split_left(){
 
     Node* ret_val = left;
@@ -199,7 +163,36 @@ Splay_tree::Splay_tree(Splay_tree&& rv_tree){
 
 Splay_tree::~Splay_tree(){
 
-    delete root;
+     Node* cur_node = root;
+
+    if (root != nullptr){
+
+        while ((cur_node->go_left() != nullptr) || (cur_node->go_right() != nullptr) || (cur_node->go_back() != nullptr)){
+
+            if (cur_node->go_left() != nullptr){
+
+                cur_node = cur_node->go_left();
+            } else{
+
+                if (cur_node->go_right() != nullptr){
+
+                    cur_node = cur_node->go_right();
+                } else{
+
+                    if (cur_node->go_back()->go_right() == cur_node){
+
+                        cur_node = cur_node->go_back();
+                        cur_node->delete_right();
+                    } else{
+                        
+                        cur_node = cur_node->go_back();
+                        cur_node->delete_left();
+                    }
+                }
+            }
+        }
+        delete root;
+    }
 }
 
 Splay_tree& Splay_tree::operator =(const Splay_tree& old_tree){
@@ -323,7 +316,7 @@ bool Splay_tree::left_zig_zag(Node* cur_node){
     return true;
 }
 
-int Splay_tree::choose_rootation(Node* cur_node){
+int Splay_tree::choose_rootation(Node* cur_node) const{
 
     if (cur_node == nullptr){ return Nothing; }
     Node* parent = cur_node->go_back();
@@ -444,7 +437,7 @@ Node* Splay_tree::find_nearest(T_key new_key){
     return cur_node;
 }
 
-bool Splay_tree::check_sub_tree(Node* cur_node){
+bool Splay_tree::check_sub_tree(Node* cur_node) const{
 
     if (cur_node == nullptr){ return true; }
 
@@ -470,7 +463,7 @@ bool Splay_tree::check_sub_tree(Node* cur_node){
     return check_sub_tree(cur_node->go_left()) && check_sub_tree(cur_node->go_right());
 }
 
-bool Splay_tree::check_tree(){
+bool Splay_tree::check_tree() const{
 
     if (root != nullptr){
 
@@ -552,7 +545,7 @@ int Splay_tree::number_of_elems(int from, int to){
     return ret_val;
 }   
 
-void Splay_tree::dump_graphviz(const char* out_name){
+void Splay_tree::dump_graphviz(const char* out_name) const{
 
     assert(check_tree());
     std::ofstream out_file(out_name);
