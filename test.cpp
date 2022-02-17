@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Perf_tests)
 
-BOOST_AUTO_TEST_CASE(range_find_4){
+BOOST_AUTO_TEST_CASE(perf){
 
     char input_name[MAXLEN] = {"../bin/perf/input_perf_test"};
     char out_name[MAXLEN] = {"../bin/perf/out_perf_test"};
@@ -125,6 +125,45 @@ BOOST_AUTO_TEST_CASE(range_find_4){
 
     std::cout << "splay time = " << splay_time << std::endl;
     std::cout << "set time = " << set_time << std::endl;
+
+    BOOST_REQUIRE_EQUAL(diff_ret, 0);
+}
+
+BOOST_AUTO_TEST_CASE(perf_2){
+
+    char input_name[MAXLEN] = {"../bin/perf_2/input_perf_test"};
+    char out_name[MAXLEN] = {"../bin/perf_2/out_perf_test"};
+
+    Test_tree perf_test(input_name, "../bin/perf_2/requests_perf_test", "../bin/perf_2/ans_perf_test");
+
+    long splay_time = perf_test.splay_tree_time(out_name);
+    int diff_ret = std::system("diff ../bin/perf_2/ans_perf_test ../bin/perf_2/out_perf_test > ../bin/out");
+
+    long set_time = perf_test.set_time(out_name);
+    diff_ret += std::system("diff ../bin/perf_2/ans_perf_test ../bin/perf_2/out_perf_test > ../bin/out");
+
+    std::cout << "splay time = " << splay_time << std::endl;
+    std::cout << "set time = " << set_time << std::endl;
+
+    BOOST_REQUIRE_EQUAL(diff_ret, 0);
+}
+
+BOOST_AUTO_TEST_CASE(perf_3){
+
+    char input_name[MAXLEN] = {"../bin/perf_3/input_perf_test"};
+    char out_name[MAXLEN] = {"../bin/perf_3/out_perf_test"};
+
+    Test_tree perf_test(input_name, "../bin/perf_3/requests_perf_test", "../bin/perf_3/ans_perf_test");
+
+    long splay_time = perf_test.splay_tree_time(out_name);
+    int diff_ret = std::system("diff ../bin/perf_3/ans_perf_test ../bin/perf_3/out_perf_test > ../bin/out");
+
+    long set_time = perf_test.set_time(out_name);
+    diff_ret += std::system("diff ../bin/perf_3/ans_perf_test ../bin/perf_3/out_perf_test > ../bin/out");
+
+    std::cout << "splay time = " << splay_time << std::endl;
+    std::cout << "set time = " << set_time << std::endl;
+    std::cout << "-----------------" << std::endl;
 
     BOOST_REQUIRE_EQUAL(diff_ret, 0);
 }

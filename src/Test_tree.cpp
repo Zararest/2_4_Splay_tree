@@ -2,6 +2,8 @@
 
 #include <cassert>
 #include <ctime>
+#include <iterator>
+#include <fstream>
 
 Test_tree::Test_tree(const char* input_name, const char* request_name, const char* answers_name){
 
@@ -108,11 +110,14 @@ long Test_tree::splay_tree_time(const char* out_name){
 
     int left_elem = 0, right_elem = 0;
     long start_time = clock(), end_time = 0;
+    int count = 0;
     
     while (fscanf(request_file, "%d %d", &left_elem, &right_elem) > 0){
 
         fprintf(out_file, "%i\n", tree.number_of_elems(left_elem, right_elem));
+        count++;
     }
+    
 
     end_time = clock();
 
@@ -123,29 +128,22 @@ long Test_tree::splay_tree_time(const char* out_name){
 
 long Test_tree::set_time(const char* out_name){
 
-    FILE* out_file = fopen(out_name, "w");
-    assert(out_file != nullptr);
+    std::ofstream out;
+    out.open(out_name, std::ios::trunc);
 
-    std::set<T_key>::iterator end = set.end();
+    fseek(request_file, 0, SEEK_SET);
+
     int left_elem = 0, right_elem = 0, number_of_elems = 0;
     long start_time = clock(), end_time = 0;
 
-    fseek(request_file, 0, SEEK_SET);
     while (fscanf(request_file, "%d %d", &left_elem, &right_elem) > 0){
         
-        number_of_elems = 0;
-
-        for (int i = left_elem; i <= right_elem; i++){
-
-            if (set.find(i) != end){ number_of_elems++; }
-        }
-
-        fprintf(out_file, "%i\n", number_of_elems);
+        out << std::distance(set.lower_bound(left_elem), set.upper_bound(right_elem)) << std::endl;
     }
 
     end_time = clock();
 
-    fclose(out_file);
+    out.close();
 
     return end_time - start_time;
 }

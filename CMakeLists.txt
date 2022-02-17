@@ -6,7 +6,7 @@ find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(SPLAY_DIR ./src/)
-SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3") 
+SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O2") 
 
 add_executable(Splay_tree   main.cpp 
                             ${SPLAY_DIR}Splay_tree.cpp)
