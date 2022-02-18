@@ -7,24 +7,23 @@
 int main(){
 
     Splay_tree new_tree;
-    std::ifstream input("../bin/find/input");
-    std::ofstream output("../bin/out");
-    std::ifstream req("../bin/find/requests");
 
-    int tmp_elem = 0;
+    int num_of_elems = 0, num_of_req = 0;
+    int tmp_elem = 0, left_elem = 0, right_elem = 0;
 
-    for (int i = 0; i < 100; i++){
+    std::cin >> num_of_elems;
 
-        input >> tmp_elem;
+    for (int i = 0; i < num_of_elems; i++){
+
+        std::cin >> tmp_elem;
         new_tree.add_new_elem(tmp_elem);
     }
 
-    new_tree.dump_graphviz("../bin/graph.dot");
+    std::cin >> num_of_req;
 
-    for (int i = 0; i < 10; i++){
+    for (int i = 0; i < num_of_req; i++){
 
-        req >> tmp_elem;
-        output << new_tree.find_elem(tmp_elem) << std::endl;
-        std::cout << new_tree.check_tree() << std::endl;
+        std::cin >> left_elem >> right_elem;
+        std::cout << new_tree.number_of_elems(left_elem, right_elem) << " ";
     }
 }
