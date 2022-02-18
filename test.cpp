@@ -8,7 +8,7 @@
 BOOST_AUTO_TEST_SUITE(Splay_tree_tests)
 
 BOOST_AUTO_TEST_CASE(find){
-
+    
     char input_name[MAXLEN] = {"../bin/find/input"};
     char out_name[MAXLEN] = {"../bin/find/out"};
 
@@ -125,6 +125,7 @@ BOOST_AUTO_TEST_CASE(perf){
 
     std::cout << "splay time = " << splay_time << std::endl;
     std::cout << "set time = " << set_time << std::endl;
+    std::cout << "-----------------" << std::endl;
 
     BOOST_REQUIRE_EQUAL(diff_ret, 0);
 }
@@ -144,6 +145,7 @@ BOOST_AUTO_TEST_CASE(perf_2){
 
     std::cout << "splay time = " << splay_time << std::endl;
     std::cout << "set time = " << set_time << std::endl;
+    std::cout << "-----------------" << std::endl;
 
     BOOST_REQUIRE_EQUAL(diff_ret, 0);
 }

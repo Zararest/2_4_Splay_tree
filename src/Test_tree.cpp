@@ -6,7 +6,7 @@
 #include <fstream>
 
 Test_tree::Test_tree(const char* input_name, const char* request_name, const char* answers_name){
-
+    
     input_file = fopen(input_name, "r");
     assert(input_file != nullptr);
     request_file = fopen(request_name, "r");
@@ -18,7 +18,7 @@ Test_tree::Test_tree(const char* input_name, const char* request_name, const cha
     int scan_ret = 0;
 
     while ((scan_ret = fscanf(input_file, "%d", &tmp_elem)) > 0){
-
+        
         tree.add_new_elem(tmp_elem);
         set.insert(tmp_elem);
     }

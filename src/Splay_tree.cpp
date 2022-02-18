@@ -3,11 +3,7 @@
 #include <cassert>
 #include <fstream>
 
-Node::Node(T_key new_key, Node* prev_node){
-
-    prev = prev_node;
-    node_key = new_key;
-}
+Node::Node(T_key new_key, Node* prev_node) : prev{prev_node}, node_key{new_key} {}
 
 void Node::copy_node_data(Node* node_to_copy){
 
@@ -151,10 +147,7 @@ void Node::print_node(std::ostream& outp_stream) const{
 }
 
 
-Splay_tree::Splay_tree(const Splay_tree& old_tree){
-
-    root = Node::copy_tree(old_tree.root);
-}
+Splay_tree::Splay_tree(const Splay_tree& old_tree) : root{root = Node::copy_tree(old_tree.root)} {}
 
 Splay_tree::Splay_tree(Splay_tree&& rv_tree){
 
@@ -163,11 +156,18 @@ Splay_tree::Splay_tree(Splay_tree&& rv_tree){
 
 Splay_tree::~Splay_tree(){
 
-     Node* cur_node = root;
+    delete_tree(root);
+}
 
-    if (root != nullptr){
+void Splay_tree::delete_tree(Node* tree_root){
 
-        while ((cur_node->go_left() != nullptr) || (cur_node->go_right() != nullptr) || (cur_node->go_back() != nullptr)){
+    Node* cur_node = tree_root;
+
+    if (tree_root != nullptr){
+
+        while ((cur_node->go_left() != nullptr) 
+            || (cur_node->go_right() != nullptr) 
+            || (cur_node->go_back() != nullptr)){
 
             if (cur_node->go_left() != nullptr){
 
@@ -179,7 +179,7 @@ Splay_tree::~Splay_tree(){
                     cur_node = cur_node->go_right();
                 } else{
 
-                    if (cur_node->go_back()->go_right() == cur_node){
+                    if (cur_node->is_right()){
 
                         cur_node = cur_node->go_back();
                         cur_node->delete_right();
@@ -191,7 +191,7 @@ Splay_tree::~Splay_tree(){
                 }
             }
         }
-        delete root;
+        delete tree_root;
     }
 }
 
@@ -199,7 +199,7 @@ Splay_tree& Splay_tree::operator =(const Splay_tree& old_tree){
 
     if (&old_tree == this){ return *this; }
 
-    delete root;
+    delete_tree(root);
     root = Node::copy_tree(old_tree.root);
 
     return *this;
@@ -226,6 +226,7 @@ bool Splay_tree::right_rotation(Node* cur_node){
     bool parent_is_right = parent->is_right();
 
     assert(cur_node->is_left());
+    cur_node->is_left();
     parent->split_left();
     parent->add_left(new_patrents_left);
 
@@ -249,6 +250,7 @@ bool Splay_tree::left_rotation(Node* cur_node){
     bool parent_is_right = parent->is_right();
 
     assert(cur_node->is_right());
+    cur_node->is_right();
     parent->split_right();
     parent->add_right(new_patrents_right);
 
@@ -268,8 +270,8 @@ bool Splay_tree::right_zig_zig(Node* cur_node){
     Node* grandparent = parent->go_back();
     if (grandparent == nullptr){ return false; }
 
-    assert(right_rotation(parent));
-    assert(right_rotation(cur_node));
+    right_rotation(parent);
+    right_rotation(cur_node);
     
     return true;
 }
@@ -282,8 +284,8 @@ bool Splay_tree::left_zig_zig(Node* cur_node){
     Node* grandparent = parent->go_back();
     if (grandparent == nullptr){ return false; }
 
-    assert(left_rotation(parent));
-    assert(left_rotation(cur_node));
+    left_rotation(parent);
+    left_rotation(cur_node);
     
     return true;
 }
@@ -360,31 +362,31 @@ void Splay_tree::pull_node_up(Node* cur_node){
     int cur_rotation = 0;
 
     while ((cur_rotation = choose_rootation(cur_node)) != Nothing){
-        
+    
         switch (cur_rotation){
 
             case Left:
-                assert(left_rotation(cur_node));
+                left_rotation(cur_node);
                 break;
             
             case Right:
-                assert(right_rotation(cur_node));
+                right_rotation(cur_node);
                 break;
 
-            case Left_zig_zig:
-                assert(left_zig_zig(cur_node));
+            case Left_zig_zig:;
+                left_zig_zig(cur_node);
                 break;
 
             case Right_zig_zig:
-                assert(right_zig_zig(cur_node));
+                right_zig_zig(cur_node);
                 break;
 
             case Left_zig_zag:
-                assert(left_zig_zag(cur_node));
+                left_zig_zag(cur_node);
                 break;
 
             case Right_zig_zag:
-                assert(right_zig_zag(cur_node));
+                right_zig_zag(cur_node);
                 break;
         }
     }
@@ -522,7 +524,8 @@ bool Splay_tree::find_elem(T_key elem){
 
 int Splay_tree::number_of_elems(int from, int to){
 
-    assert(from <= to);
+    if (from > to){ return -1; }
+
     int medium_elem = (to + from) / 2;
 
     Node* nearest_to_medium = find_nearest(medium_elem);
@@ -549,7 +552,10 @@ void Splay_tree::dump_graphviz(const char* out_name) const{
 
     assert(check_tree());
     std::ofstream out_file(out_name);
-    assert(out_file.is_open());
+    if (!out_file.is_open()){
+
+        std::cerr << "Can't open file" << std::endl;
+    }
 
     out_file << "digraph Dump{ node[color=red,fontsize=14, style=filled]" << std::endl;
     root->print_node(out_file);

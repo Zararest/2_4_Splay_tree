@@ -15,8 +15,8 @@ enum Rotations{
     Right_zig_zag = 6
 };
 
-class Node final{//надо хранить размер леврогол и правого поддеревьев 
-                 //когда происходит запрос вытягиваем середину отрезка и производим поиск концов проходя по самому правому и самому левому дереву 
+class Node final{
+
 private:
 
     Node* prev;
@@ -122,6 +122,7 @@ public:
         delete left;
         left = nullptr;
     }
+    friend class Splay_tree;
 
     void print_node(std::ostream& outp_stream) const;
 };
@@ -146,6 +147,8 @@ class Splay_tree final{
     Node* find_nearest(T_key new_key);
 
     bool check_sub_tree(Node* cur_node) const;
+
+    static void delete_tree(Node* tree_root);
 
 public:
 
