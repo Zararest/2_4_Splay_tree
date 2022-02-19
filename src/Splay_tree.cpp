@@ -2,10 +2,9 @@
 
 #include <cassert>
 #include <fstream>
+#include <exception>
 
-Node::Node(T_key new_key, Node* prev_node) : prev{prev_node}, node_key{new_key} {}
-
-void Node::copy_node_data(Node* node_to_copy){
+void Node::copy_node_data(Node* node_to_copy) noexcept{
 
     if (node_to_copy == nullptr){ return; }
 
@@ -14,14 +13,48 @@ void Node::copy_node_data(Node* node_to_copy){
     size_of_right_tree = node_to_copy->size_of_right_tree;
 }
 
-Node* Node::copy_tree(Node* old_tree){
+void delete_tree_global(Node* root){
 
-    if (old_tree == nullptr){ return nullptr; }
+    Node* cur_node = root;
 
-    Node* cur_node = old_tree;
-    Node* new_tree_cur_node = new Node(old_tree->node_key, nullptr);
-    Node* new_tree_root = new_tree_cur_node;
-    new_tree_cur_node->copy_node_data(cur_node);
+    if (root != nullptr){
+
+        while ((cur_node->go_left() != nullptr) 
+            || (cur_node->go_right() != nullptr) 
+            || (cur_node->go_back() != nullptr)){
+
+            if (cur_node->go_left() != nullptr){
+
+                cur_node = cur_node->go_left();
+            } else{
+
+                if (cur_node->go_right() != nullptr){
+
+                    cur_node = cur_node->go_right();
+                } else{
+
+                    if (cur_node->is_right()){
+
+                        cur_node = cur_node->go_back();
+                        cur_node->delete_right();
+                    } else{
+                        
+                        cur_node = cur_node->go_back();
+                        cur_node->delete_left();
+                    }
+                }
+            }
+        }
+        delete root;
+    }
+}
+
+void Node::delete_tree(Node* root) noexcept{
+
+    delete_tree_global(root);
+}
+
+void Node::_tree_walk(Node* cur_node, Node* new_tree_cur_node){
 
     int num_of_nodes = cur_node->size_of_left_tree + cur_node->size_of_right_tree;
     int num_of_copy_nodes = 0;
@@ -56,11 +89,32 @@ Node* Node::copy_tree(Node* old_tree){
             }
         }
     }
+}
 
+Node* Node::copy_tree(Node* old_tree){
+
+    if (old_tree == nullptr){ return nullptr; }
+
+    Node* cur_node = old_tree;
+    Node* new_tree_cur_node = nullptr;
+
+    new_tree_cur_node = new Node(old_tree->node_key, nullptr);
+    Node* new_tree_root = new_tree_cur_node;
+    new_tree_cur_node->copy_node_data(cur_node);
+
+    try{
+
+        _tree_walk(cur_node, new_tree_cur_node);
+    } catch (std::bad_alloc except){
+
+        delete_tree(new_tree_root);
+        throw except;
+    }
+    
     return new_tree_root;
 }
 
-Node* Node::split_left(){
+Node* Node::split_left() noexcept{
 
     Node* ret_val = left;
 
@@ -75,7 +129,7 @@ Node* Node::split_left(){
     return ret_val;
 }
 
-Node* Node::split_right(){
+Node* Node::split_right() noexcept{
 
     Node* ret_val = right;
 
@@ -90,7 +144,7 @@ Node* Node::split_right(){
     return ret_val;
 }
 
-void Node::add_left(Node* new_left){
+void Node::add_left(Node* new_left) noexcept{
 
     if (new_left != nullptr){
 
@@ -104,7 +158,7 @@ void Node::add_left(Node* new_left){
     }
 }
 
-void Node::add_right(Node* new_right){
+void Node::add_right(Node* new_right) noexcept{
 
     if (new_right != nullptr){
 
@@ -147,65 +201,29 @@ void Node::print_node(std::ostream& outp_stream) const{
 }
 
 
-Splay_tree::Splay_tree(const Splay_tree& old_tree) : root{root = Node::copy_tree(old_tree.root)} {}
-
-Splay_tree::Splay_tree(Splay_tree&& rv_tree){
+Splay_tree::Splay_tree(Splay_tree&& rv_tree) noexcept{
 
     std::swap(root, rv_tree.root);
 }
 
-Splay_tree::~Splay_tree(){
+void Splay_tree::delete_tree() noexcept{
 
-    delete_tree(root);
-}
-
-void Splay_tree::delete_tree(Node* tree_root){
-
-    Node* cur_node = tree_root;
-
-    if (tree_root != nullptr){
-
-        while ((cur_node->go_left() != nullptr) 
-            || (cur_node->go_right() != nullptr) 
-            || (cur_node->go_back() != nullptr)){
-
-            if (cur_node->go_left() != nullptr){
-
-                cur_node = cur_node->go_left();
-            } else{
-
-                if (cur_node->go_right() != nullptr){
-
-                    cur_node = cur_node->go_right();
-                } else{
-
-                    if (cur_node->is_right()){
-
-                        cur_node = cur_node->go_back();
-                        cur_node->delete_right();
-                    } else{
-                        
-                        cur_node = cur_node->go_back();
-                        cur_node->delete_left();
-                    }
-                }
-            }
-        }
-        delete tree_root;
-    }
+    delete_tree_global(root);
 }
 
 Splay_tree& Splay_tree::operator =(const Splay_tree& old_tree){
 
     if (&old_tree == this){ return *this; }
 
-    delete_tree(root);
-    root = Node::copy_tree(old_tree.root);
+    Node* tmp = Node::copy_tree(old_tree.root);
+
+    delete_tree();
+    root = tmp; 
 
     return *this;
 }
 
-Splay_tree& Splay_tree::operator =(Splay_tree&& rv_tree){
+Splay_tree& Splay_tree::operator =(Splay_tree&& rv_tree) noexcept{
 
     if (&rv_tree == this){ return *this; }
 
@@ -214,7 +232,7 @@ Splay_tree& Splay_tree::operator =(Splay_tree&& rv_tree){
     return *this;
 }
 
-bool Splay_tree::right_rotation(Node* cur_node){
+bool Splay_tree::right_rotation(Node* cur_node) noexcept{
 
     if (cur_node == nullptr){ return false; }
     Node* parent = cur_node->go_back();
@@ -238,7 +256,7 @@ bool Splay_tree::right_rotation(Node* cur_node){
     return true;
 }
 
-bool Splay_tree::left_rotation(Node* cur_node){
+bool Splay_tree::left_rotation(Node* cur_node) noexcept{
 
     if (cur_node == nullptr){ return false; }
     Node* parent = cur_node->go_back();
@@ -262,7 +280,7 @@ bool Splay_tree::left_rotation(Node* cur_node){
     return true;
 }
 
-bool Splay_tree::right_zig_zig(Node* cur_node){
+bool Splay_tree::right_zig_zig(Node* cur_node) noexcept{
 
     if (cur_node == nullptr){ return false; }
     Node* parent = cur_node->go_back();
@@ -276,7 +294,7 @@ bool Splay_tree::right_zig_zig(Node* cur_node){
     return true;
 }
 
-bool Splay_tree::left_zig_zig(Node* cur_node){
+bool Splay_tree::left_zig_zig(Node* cur_node) noexcept{
 
     if (cur_node == nullptr){ return false; }
     Node* parent = cur_node->go_back();
@@ -290,7 +308,7 @@ bool Splay_tree::left_zig_zig(Node* cur_node){
     return true;
 }
 
-bool Splay_tree::right_zig_zag(Node* cur_node){
+bool Splay_tree::right_zig_zag(Node* cur_node) noexcept{
 
     if (cur_node == nullptr){ return false; }
     Node* parent = cur_node->go_back();
@@ -304,7 +322,7 @@ bool Splay_tree::right_zig_zag(Node* cur_node){
     return true;
 }
 
-bool Splay_tree::left_zig_zag(Node* cur_node){
+bool Splay_tree::left_zig_zag(Node* cur_node) noexcept{
 
     if (cur_node == nullptr){ return false; }
     Node* parent = cur_node->go_back();
@@ -318,7 +336,7 @@ bool Splay_tree::left_zig_zag(Node* cur_node){
     return true;
 }
 
-int Splay_tree::choose_rootation(Node* cur_node) const{
+int Splay_tree::choose_rootation(Node* cur_node) const noexcept{
 
     if (cur_node == nullptr){ return Nothing; }
     Node* parent = cur_node->go_back();
@@ -357,7 +375,7 @@ int Splay_tree::choose_rootation(Node* cur_node) const{
     }
 }
 
-void Splay_tree::pull_node_up(Node* cur_node){
+void Splay_tree::pull_node_up(Node* cur_node) noexcept{
 
     int cur_rotation = 0;
 
@@ -396,7 +414,7 @@ void Splay_tree::pull_node_up(Node* cur_node){
     //dump_graphviz("../bin/graph.dot");
 }
 
-Node* Splay_tree::find_nearest(T_key new_key){
+Node* Splay_tree::find_nearest(T_key new_key) noexcept{
 
     if (root == nullptr){ return nullptr; }
 
@@ -439,7 +457,7 @@ Node* Splay_tree::find_nearest(T_key new_key){
     return cur_node;
 }
 
-bool Splay_tree::check_sub_tree(Node* cur_node) const{
+bool Splay_tree::check_sub_tree(Node* cur_node) const noexcept{
 
     if (cur_node == nullptr){ return true; }
 
@@ -465,7 +483,7 @@ bool Splay_tree::check_sub_tree(Node* cur_node) const{
     return check_sub_tree(cur_node->go_left()) && check_sub_tree(cur_node->go_right());
 }
 
-bool Splay_tree::check_tree() const{
+bool Splay_tree::check_tree() const noexcept{
 
     if (root != nullptr){
 
@@ -484,6 +502,7 @@ void Splay_tree::add_new_elem(T_key new_elem){
     }
 
     Node* new_node = new Node(new_elem);
+
     Node* nearest_elem = find_nearest(new_elem);
     Node* new_left = nullptr;
     Node* new_right = nullptr;
@@ -508,7 +527,7 @@ void Splay_tree::add_new_elem(T_key new_elem){
     root = new_node;
 }
 
-bool Splay_tree::find_elem(T_key elem){
+bool Splay_tree::find_elem(T_key elem) noexcept{
     
     Node* nearest = find_nearest(elem);
     Node tmp_node(elem);
@@ -522,7 +541,7 @@ bool Splay_tree::find_elem(T_key elem){
     return false;
 }
 
-int Splay_tree::number_of_elems(int from, int to){
+int Splay_tree::number_of_elems(int from, int to) noexcept{
 
     if (from > to){ return -1; }
 
