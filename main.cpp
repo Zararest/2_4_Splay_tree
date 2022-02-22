@@ -6,6 +6,8 @@
 
 int main(){
 
+    1 <=> 2; 
+
     Splay_tree new_tree;
 
     int num_of_elems = 0, num_of_req = 0;

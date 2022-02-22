@@ -1,5 +1,6 @@
 #pragma onse
 
+#include <compare>
 #include <iostream>
 
 typedef int T_key;
@@ -45,7 +46,12 @@ public:
     Node& operator =(const Node&) = delete;
     Node& operator =(Node&&) = delete;
 
-    bool operator <(const Node& right_node) const noexcept{
+    std::strong_ordering operator <=>(const Node& right_node){
+
+        return node_key <=> right_node.node_key;
+    }
+
+    /*bool operator <(const Node& right_node) const noexcept{
 
         return node_key < right_node.node_key;
     }
@@ -60,7 +66,7 @@ public:
     bool operator >=(const Node& right_node) const noexcept{
 
         return node_key >= right_node.node_key;
-    }
+    }*/
     bool operator ==(const Node& right_node) const noexcept{
 
         return node_key == right_node.node_key;
