@@ -1,24 +1,27 @@
-#include "Splay_tree.h"
+#include "Splay_tree.hpp"
+#include "../AVL_tree/headers/AVL_tree.hpp"
 
 #include <set>
 
 #define MAXLEN 100
 
-class Test_tree final{
+class Test_tree{
+
+protected:
 
     FILE* input_file = nullptr;
     FILE* request_file = nullptr;
     FILE* answers_file = nullptr;
 
-    Splay_tree tree;
-    std::set<T_key> set;
+    Splay_tree<int> tree;
+    std::set<int> set;
 
 public:
 
     Test_tree(const char* input_name, const char* request_name, const char* answers_name);
     Test_tree(const Test_tree&) = delete;
     Test_tree(Test_tree&&) = delete;
-    ~Test_tree();
+    virtual ~Test_tree();
 
     void find(const char* out_name);
     void range_requests(const char* out_name);
@@ -27,4 +30,19 @@ public:
 
     long splay_tree_time(const char* out_name);
     long set_time(const char* out_name);
+};
+
+class Perf_test_tree final: public Test_tree{
+
+    AVL_tree AVL;
+
+public:
+
+    Perf_test_tree(const char* input_name, const char* request_name, const char* answers_name);
+    Perf_test_tree(const Perf_test_tree&) = delete;
+    Perf_test_tree(Perf_test_tree&&) = delete;
+    ~Perf_test_tree(){};
+
+    void check_AVL_tree(const char* out_name);
+    void perf_test(const char* out_name);
 };

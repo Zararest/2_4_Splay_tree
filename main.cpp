@@ -1,4 +1,4 @@
-#include "src/headers/Splay_tree.h"
+#include "src/headers/Splay_tree.hpp"
 
 #include <fstream>
 
@@ -6,9 +6,7 @@
 
 int main(){
 
-    1 <=> 2; 
-
-    Splay_tree new_tree;
+    Splay_tree<int> new_tree;
 
     int num_of_elems = 0, num_of_req = 0;
     int tmp_elem = 0, left_elem = 0, right_elem = 0;

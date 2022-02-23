@@ -65,7 +65,7 @@ void Test_tree::range_requests(const char* out_name){
 
 void Test_tree::copy_assign(const char* out_name){
 
-    Splay_tree new_tree;
+    Splay_tree<int> new_tree;
     new_tree = tree;
 
     int tmp_elem = 0;
@@ -84,10 +84,10 @@ void Test_tree::copy_assign(const char* out_name){
 
 void Test_tree::move_assign(const char* out_name){
 
-    Splay_tree new_tree;
+    Splay_tree<int> new_tree;
     new_tree = tree;
-    Splay_tree new_move_tree;
-    new_move_tree = static_cast<Splay_tree&&>(new_tree);
+    Splay_tree<int> new_move_tree;
+    new_move_tree = static_cast<Splay_tree<int>&&>(new_tree);
 
     int tmp_elem = 0;
     FILE* out_file = fopen(out_name, "w");
