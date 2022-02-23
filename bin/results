@@ -1,0 +1,15 @@
+random requests:
+(Splay, AVL) = { 6227, 3608}
+(Splay, AVL) = { 6264, 3205}
+(Splay, AVL) = { 6231, 3132}
+(Splay, AVL) = { 6157, 3161}
+(Splay, AVL) = { 6337, 3152}
+(Splay, AVL) = { 6146, 3205}
+(Splay, AVL) = { 6325, 3184}
+(Splay, AVL) = { 6310, 3117}
+(Splay, AVL) = { 6158, 3206}
+(Splay, AVL) = { 6290, 3112}
+average time: Splay tree: 6244, AVL tree: 3208
+-------------------
+
+

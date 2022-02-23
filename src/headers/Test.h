@@ -4,6 +4,7 @@
 #include <set>
 
 #define MAXLEN 100
+#define NUM_OF_MEASUR 10
 
 class Test_tree{
 
@@ -44,5 +45,5 @@ public:
     ~Perf_test_tree(){};
 
     void check_AVL_tree(const char* out_name);
-    void perf_test(const char* out_name);
+    void perf_test(std::ostream& answers);
 };
