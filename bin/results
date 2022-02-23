@@ -1,15 +1,60 @@
-random requests:
-(Splay, AVL) = { 6227, 3608}
-(Splay, AVL) = { 6264, 3205}
-(Splay, AVL) = { 6231, 3132}
-(Splay, AVL) = { 6157, 3161}
-(Splay, AVL) = { 6337, 3152}
-(Splay, AVL) = { 6146, 3205}
-(Splay, AVL) = { 6325, 3184}
-(Splay, AVL) = { 6310, 3117}
-(Splay, AVL) = { 6158, 3206}
-(Splay, AVL) = { 6290, 3112}
-average time: Splay tree: 6244, AVL tree: 3208
+random requests(input: 90000; requests: 10000):
+(Splay, AVL) = { 6165, 3880}
+(Splay, AVL) = { 6149, 3389}
+(Splay, AVL) = { 6227, 3430}
+(Splay, AVL) = { 6188, 3294}
+(Splay, AVL) = { 6127, 3331}
+(Splay, AVL) = { 6231, 3364}
+(Splay, AVL) = { 6139, 3306}
+(Splay, AVL) = { 6111, 3291}
+(Splay, AVL) = { 6135, 3380}
+(Splay, AVL) = { 6324, 3455}
+average time: Splay tree: 6179, AVL tree: 3412
+-------------------
+
+
+random requests(input: 10000; requests: 10000):
+(Splay, AVL) = { 7197, 3302}
+(Splay, AVL) = { 7197, 3244}
+(Splay, AVL) = { 7208, 3266}
+(Splay, AVL) = { 7142, 3296}
+(Splay, AVL) = { 7180, 3226}
+(Splay, AVL) = { 7187, 3225}
+(Splay, AVL) = { 7142, 3228}
+(Splay, AVL) = { 7188, 3231}
+(Splay, AVL) = { 7137, 3244}
+(Splay, AVL) = { 7209, 3234}
+average time: Splay tree: 7178, AVL tree: 3249
+-------------------
+
+
+not random requests(input: 10000; requests: 10000; sigma = 100):
+(Splay, AVL) = { 5577, 2240}
+(Splay, AVL) = { 5719, 2185}
+(Splay, AVL) = { 5645, 2162}
+(Splay, AVL) = { 5659, 2182}
+(Splay, AVL) = { 5741, 2169}
+(Splay, AVL) = { 5704, 2167}
+(Splay, AVL) = { 5752, 2181}
+(Splay, AVL) = { 5770, 2138}
+(Splay, AVL) = { 5685, 2207}
+(Splay, AVL) = { 5788, 2175}
+average time: Splay tree: 5704, AVL tree: 2180
+-------------------
+
+
+not random requests(input: 10000; requests: 10000; sigma = 100):
+(Splay, AVL) = { 5046, 2250}
+(Splay, AVL) = { 5163, 2211}
+(Splay, AVL) = { 5217, 2192}
+(Splay, AVL) = { 5272, 2228}
+(Splay, AVL) = { 5238, 2183}
+(Splay, AVL) = { 5221, 2239}
+(Splay, AVL) = { 5218, 2151}
+(Splay, AVL) = { 5212, 2203}
+(Splay, AVL) = { 5158, 2198}
+(Splay, AVL) = { 5224, 2162}
+average time: Splay tree: 5196, AVL tree: 2201
 -------------------
 
 
