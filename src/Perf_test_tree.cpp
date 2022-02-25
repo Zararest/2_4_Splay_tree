@@ -36,8 +36,7 @@ void Perf_test_tree::perf_test(std::ostream& answers){
     long AVL_total_time = 0, Splay_total_time = 0;
     int left_elem = 0, right_elem = 0;
 
-    for (int i = 0; i < NUM_OF_MEASUR; i++){
-
+    for (int i = 0; i < 100 * NUM_OF_MEASUR; i++){ 
         fseek(request_file, 0, SEEK_SET);
 
         start_time = clock();
@@ -58,11 +57,71 @@ void Perf_test_tree::perf_test(std::ostream& answers){
         end_time = clock();
         AVL_time = end_time - start_time;
         
+        
+
         Splay_total_time += Splay_time;
         AVL_total_time += AVL_time;
 
-        answers << "(Splay, AVL) = { " << Splay_time << ", " << AVL_time << "}" << std::endl;
+        // answers << "(Splay, AVL) = { " << Splay_time << ", " << AVL_time << "}" << std::endl;
     }
 
     answers << "average time: Splay tree: " << (Splay_total_time / NUM_OF_MEASUR) << ", AVL tree: " << (AVL_total_time / NUM_OF_MEASUR) << std::endl;
+}
+
+void Perf_test_tree::print_distribution(const char* distr_name, std::ofstream& result){
+
+    std::ifstream input(distr_name);
+    std::vector<int> distribution(1024, 0);
+    int cur_num = 0, sum = 0, max_val = 0, max_num = 0;
+    bool get_num = true;
+
+    while (input.good()){
+
+        input >> cur_num;
+
+        while (distribution.size() < cur_num){
+
+            distribution.resize(distribution.size() * 2);
+            
+            for (int i = distribution.size() / 2 - 1; i < distribution.size(); i++){
+
+                distribution[i] = 0;
+            }
+        }
+
+        distribution[cur_num]++;
+        sum += cur_num;
+
+        if (distribution[cur_num] > max_val){
+
+            max_val = distribution[cur_num];
+        }
+
+        if (cur_num > max_num){
+
+            max_num = cur_num;
+        }
+    }
+    
+    int size_of_symbol = max_val / MAX_ROW_SIZE + 1;
+    int section_size = max_num / NUM_OF_CHUNKS;
+
+    for (int i = 0; i < NUM_OF_CHUNKS; i++){
+
+        int cur_sum = 0;
+
+        for (int j = i * section_size; j < (i + 1) * section_size; j++){
+
+            cur_sum += distribution[j];
+        }
+
+        int num_of_symbols = cur_sum / size_of_symbol;
+
+        for (int j = 0; j < num_of_symbols; j++){
+            
+            std::cout << "=";
+        }
+
+        std::cout << std::endl;
+    }
 }

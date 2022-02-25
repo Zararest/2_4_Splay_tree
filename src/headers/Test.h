@@ -5,6 +5,8 @@
 
 #define MAXLEN 100
 #define NUM_OF_MEASUR 10
+#define MAX_ROW_SIZE 30
+#define NUM_OF_CHUNKS 30
 
 class Test_tree{
 
@@ -46,4 +48,6 @@ public:
 
     void check_AVL_tree(const char* out_name);
     void perf_test(std::ostream& answers);
+
+    void print_distribution(const char* distr_name, std::ofstream& result);
 };
