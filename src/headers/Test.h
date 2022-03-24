@@ -4,7 +4,7 @@
 #include <set>
 
 #define MAXLEN 100
-#define NUM_OF_MEASUR 10
+#define NUM_OF_MEASUR 1
 #define MAX_ROW_SIZE 30
 #define NUM_OF_CHUNKS 30
 

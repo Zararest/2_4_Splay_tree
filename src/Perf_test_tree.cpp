@@ -7,7 +7,7 @@ Perf_test_tree::Perf_test_tree(const char* input_name, const char* request_name,
     fseek(input_file, 0, SEEK_SET);
 
     while ((scan_ret = fscanf(input_file, "%d", &tmp_elem)) > 0){
-        
+
         AVL.add_new_elem(tmp_elem);
     }
 }
@@ -36,35 +36,33 @@ void Perf_test_tree::perf_test(std::ostream& answers){
     long AVL_total_time = 0, Splay_total_time = 0;
     int left_elem = 0, right_elem = 0;
 
-    for (int i = 0; i < 100 * NUM_OF_MEASUR; i++){ 
-        fseek(request_file, 0, SEEK_SET);
-
-        start_time = clock();
-        while (fscanf(request_file, "%d %d", &left_elem, &right_elem) > 0){
-
-            tree.number_of_elems(left_elem, right_elem);
-        }
-        end_time = clock();
-        Splay_time = end_time - start_time;
-
-        fseek(request_file, 0, SEEK_SET);
-
-        start_time = clock();
-        while (fscanf(request_file, "%d %d", &left_elem, &right_elem) > 0){
-
-            AVL.number_of_elems(left_elem, right_elem);
-        }
-        end_time = clock();
-        AVL_time = end_time - start_time;
-        
-        
-
-        Splay_total_time += Splay_time;
-        AVL_total_time += AVL_time;
-
-        // answers << "(Splay, AVL) = { " << Splay_time << ", " << AVL_time << "}" << std::endl;
+    std::vector <std::pair <int, int>> vec;
+    while (fscanf(request_file, "%d %d", &left_elem, &right_elem) > 0) {
+        vec.emplace_back (left_elem, right_elem);
     }
 
+    start_time = clock();
+    for (std::size_t i = 0; i < 1'00 * NUM_OF_MEASUR; i++){
+        for (const auto[left, right] : vec) {
+            AVL.number_of_elems(left, right);
+        }
+    }
+    end_time = clock();
+
+    AVL_time = end_time - start_time;
+    AVL_total_time += AVL_time;
+
+    start_time = clock();
+    for (std::size_t i = 0; i < 1'00 * NUM_OF_MEASUR; i++){
+        for (const auto[left, right] : vec) {
+            tree.number_of_elems(left, right);
+        }
+    }
+    end_time = clock();
+
+    Splay_time = end_time - start_time;
+    Splay_total_time += Splay_time;
+    
     answers << "average time: Splay tree: " << (Splay_total_time / NUM_OF_MEASUR) << ", AVL tree: " << (AVL_total_time / NUM_OF_MEASUR) << std::endl;
 }
 
@@ -82,7 +80,7 @@ void Perf_test_tree::print_distribution(const char* distr_name, std::ofstream& r
         while (distribution.size() < cur_num){
 
             distribution.resize(distribution.size() * 2);
-            
+
             for (int i = distribution.size() / 2 - 1; i < distribution.size(); i++){
 
                 distribution[i] = 0;
@@ -102,7 +100,7 @@ void Perf_test_tree::print_distribution(const char* distr_name, std::ofstream& r
             max_num = cur_num;
         }
     }
-    
+
     int size_of_symbol = max_val / MAX_ROW_SIZE + 1;
     int section_size = max_num / NUM_OF_CHUNKS;
 
@@ -118,7 +116,7 @@ void Perf_test_tree::print_distribution(const char* distr_name, std::ofstream& r
         int num_of_symbols = cur_sum / size_of_symbol;
 
         for (int j = 0; j < num_of_symbols; j++){
-            
+
             std::cout << "=";
         }
 

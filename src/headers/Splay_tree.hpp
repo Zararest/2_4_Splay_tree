@@ -131,15 +131,16 @@ class Splay_tree final{
 
     int choose_rootation(Node<T_key>* cur_node) const noexcept;
 
-    bool left_rotation(Node<T_key>* cur_node) noexcept;
-    bool right_rotation(Node<T_key>* cur_node) noexcept;
-    bool left_zig_zig(Node<T_key>* cur_node) noexcept;
-    bool right_zig_zig(Node<T_key>* cur_node) noexcept;
-    bool left_zig_zag(Node<T_key>* cur_node) noexcept;
-    bool right_zig_zag(Node<T_key>* cur_node) noexcept;
+    void left_rotation(Node<T_key>* cur_node) noexcept;
+    void right_rotation(Node<T_key>* cur_node) noexcept;
+    void left_zig_zig(Node<T_key>* cur_node) noexcept;
+    void right_zig_zig(Node<T_key>* cur_node) noexcept;
+    void left_zig_zag(Node<T_key>* cur_node) noexcept;
+    void right_zig_zag(Node<T_key>* cur_node) noexcept;
 
     void pull_node_up(Node<T_key>* cur_node);
     Node<T_key>* find_nearest(T_key new_key) noexcept;
+    Node<T_key>* get_median(Node<T_key>& cur_left, T_key median);
 
     bool check_sub_tree(Node<T_key>* cur_node) const noexcept;
 
