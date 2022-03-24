@@ -245,11 +245,11 @@ Splay_tree<T_key>& Splay_tree<T_key>::operator =(Splay_tree<T_key>&& rv_tree) no
 }
 
 template <typename T_key>
-bool Splay_tree<T_key>::right_rotation(Node<T_key>* cur_node) noexcept{
+void Splay_tree<T_key>::right_rotation(Node<T_key>* cur_node) noexcept{
 
-    if (cur_node == nullptr){ return false; }
+    if (cur_node == nullptr){ return; }
     Node<T_key>* parent = cur_node->go_back();
-    if (parent == nullptr){ return false; }
+    if (parent == nullptr){ return; }
 
     Node<T_key>* new_patrents_left = cur_node->split_right();
     Node<T_key>* grandparent = parent->go_back();
@@ -265,16 +265,14 @@ bool Splay_tree<T_key>::right_rotation(Node<T_key>* cur_node) noexcept{
 
     if (parent_is_left){ grandparent->add_left(cur_node); }
     if (parent_is_right){ grandparent->add_right(cur_node); }
-
-    return true;
 }
 
 template <typename T_key>
-bool Splay_tree<T_key>::left_rotation(Node<T_key>* cur_node) noexcept{
+void Splay_tree<T_key>::left_rotation(Node<T_key>* cur_node) noexcept{
 
-    if (cur_node == nullptr){ return false; }
+    if (cur_node == nullptr){ return; }
     Node<T_key>* parent = cur_node->go_back();
-    if (parent == nullptr){ return false; }
+    if (parent == nullptr){ return; }
 
     Node<T_key>* new_patrents_right = cur_node->split_left();
     Node<T_key>* grandparent = parent->go_back();
@@ -290,68 +288,58 @@ bool Splay_tree<T_key>::left_rotation(Node<T_key>* cur_node) noexcept{
 
     if (parent_is_left){ grandparent->add_left(cur_node); }
     if (parent_is_right){ grandparent->add_right(cur_node); }
-
-    return true;
 }
 
 template <typename T_key>
-bool Splay_tree<T_key>::right_zig_zig(Node<T_key>* cur_node) noexcept{
+void Splay_tree<T_key>::right_zig_zig(Node<T_key>* cur_node) noexcept{
 
-    if (cur_node == nullptr){ return false; }
+    if (cur_node == nullptr){ return; }
     Node<T_key>* parent = cur_node->go_back();
-    if (parent == nullptr){ return false; }
+    if (parent == nullptr){ return; }
     Node<T_key>* grandparent = parent->go_back();
-    if (grandparent == nullptr){ return false; }
+    if (grandparent == nullptr){ return; }
 
     right_rotation(parent);
     right_rotation(cur_node);
-    
-    return true;
 }
 
 template <typename T_key>
-bool Splay_tree<T_key>::left_zig_zig(Node<T_key>* cur_node) noexcept{
+void Splay_tree<T_key>::left_zig_zig(Node<T_key>* cur_node) noexcept{
 
-    if (cur_node == nullptr){ return false; }
+    if (cur_node == nullptr){ return; }
     Node<T_key>* parent = cur_node->go_back();
-    if (parent == nullptr){ return false; }
+    if (parent == nullptr){ return; }
     Node<T_key>* grandparent = parent->go_back();
-    if (grandparent == nullptr){ return false; }
+    if (grandparent == nullptr){ return; }
 
     left_rotation(parent);
     left_rotation(cur_node);
-    
-    return true;
 }
 
 template <typename T_key>
-bool Splay_tree<T_key>::right_zig_zag(Node<T_key>* cur_node) noexcept{
+void Splay_tree<T_key>::right_zig_zag(Node<T_key>* cur_node) noexcept{
 
-    if (cur_node == nullptr){ return false; }
+    if (cur_node == nullptr){ return; }
     Node<T_key>* parent = cur_node->go_back();
-    if (parent == nullptr){ return false; }
+    if (parent == nullptr){ return; }
     Node<T_key>* grandparent = parent->go_back();
-    if (grandparent == nullptr){ return false; }
+    if (grandparent == nullptr){ return; }
 
     left_rotation(cur_node);
     right_rotation(cur_node);
-
-    return true;
 }
 
 template <typename T_key>
-bool Splay_tree<T_key>::left_zig_zag(Node<T_key>* cur_node) noexcept{
+void Splay_tree<T_key>::left_zig_zag(Node<T_key>* cur_node) noexcept{
 
-    if (cur_node == nullptr){ return false; }
+    if (cur_node == nullptr){ return; }
     Node<T_key>* parent = cur_node->go_back();
-    if (parent == nullptr){ return false; }
+    if (parent == nullptr){ return; }
     Node<T_key>* grandparent = parent->go_back();
-    if (grandparent == nullptr){ return false; }
+    if (grandparent == nullptr){ return; }
 
     right_rotation(cur_node);
     left_rotation(cur_node);
-
-    return true;
 }
 
 template <typename T_key>
@@ -404,27 +392,27 @@ void Splay_tree<T_key>::pull_node_up(Node<T_key>* cur_node){
         switch (cur_rotation){
 
             case Left:
-                if (!left_rotation(cur_node)){ throw std::logic_error("Left rotation"); }
+                left_rotation(cur_node);
                 break;
             
             case Right:
-                if (!right_rotation(cur_node)){ throw std::logic_error("Right rotation"); }
+                right_rotation(cur_node);
                 break;
 
             case Left_zig_zig:;
-                if (!left_zig_zig(cur_node)){ throw std::logic_error("Left zig zig"); }
+                left_zig_zig(cur_node);
                 break;
 
             case Right_zig_zig:
-                if (!right_zig_zig(cur_node)){ throw std::logic_error("Right zig zig"); }
+                right_zig_zig(cur_node);
                 break;
 
             case Left_zig_zag:
-                if (!left_zig_zag(cur_node)){ throw std::logic_error("Left zig zag"); }
+                left_zig_zag(cur_node);
                 break;
 
             case Right_zig_zag:
-                if (!right_zig_zag(cur_node)){ throw std::logic_error("Right zig zag"); }
+                right_zig_zag(cur_node);
                 break;
         }
     }
@@ -443,13 +431,13 @@ Node<T_key>* Splay_tree<T_key>::find_nearest(T_key new_key) noexcept{
 
     num_of_smaller_elems = 0;
     num_of_greater_elems = 0;
-
+    ;
     while (not_found){
-
+ 
         not_found = false;
 
         if (*cur_node == tmp_node){ 
-
+            
             num_of_greater_elems += cur_node->get_right_tree_size();
             num_of_smaller_elems += cur_node->get_left_tree_size();    
             return cur_node; 
@@ -579,27 +567,26 @@ bool Splay_tree<T_key>::find_elem(T_key elem) noexcept{
 }
 
 template <typename T_key>
+Node<T_key>* Splay_tree<T_key>::get_median(Node<T_key>& cur_left, T_key median){
+
+    Node<T_key> tmp_node{median};
+    Node<T_key>* ret_node = &cur_left;
+    Node<T_key>* prev_node = nullptr;
+
+    while ((prev_node = ret_node->go_back()) != nullptr 
+            && *ret_node < tmp_node){
+        
+        ret_node = prev_node;
+    }
+
+    return ret_node;
+}
+
+template <typename T_key>
 int Splay_tree<T_key>::number_of_elems(int from, int to) noexcept{
 
     if (from > to){ return -1; }
 
-    int medium_elem = (to + from) / 2;
-
-    Node<T_key>* nearest_to_medium = find_nearest(medium_elem);
-
-    try{
-
-        pull_node_up(nearest_to_medium);
-    }catch (std::logic_error exception){
-
-        std::cerr << "Can't make rotation:" << exception.what() << "in number_of_elems()" << std::endl;
-        return 0;
-    }
-
-    if (nearest_to_medium == nullptr){ return 0; }
-
-    Node<T_key> tmp_left(from);
-    Node<T_key> tmp_right(to);
     Node<T_key>* left_limit = find_nearest(from);
     int num_of_greater_than_left = num_of_greater_elems;
     Node<T_key>* right_limit = find_nearest(to);
@@ -607,8 +594,12 @@ int Splay_tree<T_key>::number_of_elems(int from, int to) noexcept{
 
     int ret_val = num_of_greater_than_left - num_of_greater_than_right + 1;
 
-    if (*left_limit < tmp_left){ ret_val--; }
-    if (*right_limit > tmp_right){ ret_val--; }
+    if (root->get_key() < from || root->get_key() > to){
+
+        pull_node_up(get_median(*left_limit, (from + to) / 2));
+    }
+    
+    ret_val -= (left_limit->get_key() < from) + (right_limit->get_key() > to);
 
     return ret_val;
 }   
