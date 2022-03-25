@@ -6,7 +6,7 @@
 #include <vector>
 
 template <typename T_key>
-void Node<T_key>::copy_node_data(Node<T_key>* node_to_copy) noexcept{
+void Node<T_key>::copy_node_data(Node<T_key>* node_to_copy) noexcept(std::is_nothrow_copy_constructible<T_key>::value){
 
     if (node_to_copy == nullptr){ return; }
 
@@ -21,6 +21,7 @@ void delete_tree_global(Node<T_key>* root) noexcept{
     if (root == nullptr){ return; }
 
     Node<T_key>* cur_node = root;
+    Node<T_key>* tmp_right = nullptr;
     int tree_size = root->get_left_tree_size() + root->get_right_tree_size(); 
     std::vector<Node<T_key>*> path_stack;
     path_stack.reserve(tree_size);
@@ -29,19 +30,12 @@ void delete_tree_global(Node<T_key>* root) noexcept{
         
         if (path_stack.size() != 0){
 
-            cur_node = path_stack[path_stack.size() - 1];
+            cur_node = path_stack.back();
+            tmp_right = cur_node->go_right();
             path_stack.pop_back();
             delete cur_node;
             
-            if (cur_node->go_right() != nullptr){
-
-                Node<T_key>* tmp = cur_node->go_right();
-                
-                cur_node = tmp;
-            } else{
-
-                cur_node = nullptr;
-            }
+            cur_node = tmp_right;
         }
 
         while (cur_node != nullptr){
@@ -101,13 +95,11 @@ Node<T_key>* Node<T_key>::copy_tree(Node<T_key>* old_tree, Node<T_key>*& mount_n
 
     if (old_tree == nullptr){ return nullptr; }
 
-    Node<T_key>* cur_node = old_tree;
-
     mount_node = new Node<T_key>(old_tree->node_key, nullptr);
     Node<T_key>* new_tree_root = mount_node;
-    mount_node->copy_node_data(cur_node);
+    mount_node->copy_node_data(old_tree);
 
-    tree_walk(cur_node, mount_node);    
+    tree_walk(old_tree, mount_node);   
     
     return new_tree_root;
 }
@@ -227,7 +219,7 @@ template <typename T_key>
 Splay_tree<T_key>& Splay_tree<T_key>::operator =(const Splay_tree<T_key>& old_tree){
 
     Splay_tree<T_key> tmp_tree;
-    Node<T_key>::copy_tree(old_tree.root, tmp_tree.root);//если будет исключение, то будет вызван деструктор
+    Node<T_key>::copy_tree(old_tree.root, tmp_tree.root);
 
     std::swap(root, tmp_tree.root);
 
@@ -383,7 +375,7 @@ int Splay_tree<T_key>::choose_rootation(Node<T_key>* cur_node) const noexcept{
 }
 
 template <typename T_key>
-void Splay_tree<T_key>::pull_node_up(Node<T_key>* cur_node){
+void Splay_tree<T_key>::pull_node_up(Node<T_key>* cur_node) noexcept{
 
     int cur_rotation = 0;
 
@@ -421,17 +413,17 @@ void Splay_tree<T_key>::pull_node_up(Node<T_key>* cur_node){
 }
 
 template <typename T_key>
-Node<T_key>* Splay_tree<T_key>::find_nearest(T_key new_key) noexcept{
+Node<T_key>* Splay_tree<T_key>::find_nearest(T_key new_key){
 
     if (root == nullptr){ return nullptr; }
 
-    Node<T_key> tmp_node(new_key);
+    Node<T_key> tmp_node{new_key};
     Node<T_key>* cur_node = root;
     bool not_found = true;
 
     num_of_smaller_elems = 0;
     num_of_greater_elems = 0;
-    ;
+    
     while (not_found){
  
         not_found = false;
@@ -465,7 +457,7 @@ Node<T_key>* Splay_tree<T_key>::find_nearest(T_key new_key) noexcept{
 }
 
 template <typename T_key>
-bool Splay_tree<T_key>::check_sub_tree(Node<T_key>* cur_node) const noexcept{
+bool Splay_tree<T_key>::check_sub_tree(Node<T_key>* cur_node) const{
 
     if (cur_node == nullptr){ return true; }
 
@@ -492,7 +484,7 @@ bool Splay_tree<T_key>::check_sub_tree(Node<T_key>* cur_node) const noexcept{
 }
 
 template <typename T_key>
-bool Splay_tree<T_key>::check_tree() const noexcept{
+bool Splay_tree<T_key>::check_tree() const{
 
     if (root != nullptr){
 
@@ -518,14 +510,7 @@ void Splay_tree<T_key>::add_new_elem(T_key new_elem){
     Node<T_key>* new_right = nullptr;
     assert(nearest_elem != nullptr);
 
-    try{
-
-        pull_node_up(nearest_elem);
-    }catch (std::logic_error exception){
-
-        std::cerr << "Can't make rotation:" << exception.what() << "in add_new_elem()" << std::endl;
-        return;
-    }
+    pull_node_up(nearest_elem);
 
     if (*new_node > *nearest_elem){
         
@@ -545,21 +530,15 @@ void Splay_tree<T_key>::add_new_elem(T_key new_elem){
 }
 
 template <typename T_key>
-bool Splay_tree<T_key>::find_elem(T_key elem) noexcept{
+bool Splay_tree<T_key>::find_elem(T_key elem){
     
     Node<T_key>* nearest = find_nearest(elem);
     Node<T_key> tmp_node(elem);
 
     if (nearest != nullptr && *nearest == tmp_node){ 
         
-        try{
+        pull_node_up(nearest);
 
-            pull_node_up(nearest);
-        }catch (std::logic_error exception){
-
-            std::cerr << "Can't make rotation:" << exception.what() << "in find_elem()" << std::endl;
-            return false;
-        }
         return true; 
     }
 
@@ -583,7 +562,7 @@ Node<T_key>* Splay_tree<T_key>::get_median(Node<T_key>& cur_left, T_key median){
 }
 
 template <typename T_key>
-int Splay_tree<T_key>::number_of_elems(int from, int to) noexcept{
+int Splay_tree<T_key>::number_of_elems(T_key from, T_key to){
 
     if (from > to){ return -1; }
 

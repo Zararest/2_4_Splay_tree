@@ -30,8 +30,8 @@ private:
 
     static void tree_walk(Node<T_key>* cur_node, Node<T_key>* new_tree_cur_node);
 
-    void copy_node_data(Node<T_key>* node_to_copy) noexcept;
-    static void delete_tree(Node<T_key>* root) noexcept; //если при освобождении исключение, то все
+    void copy_node_data(Node<T_key>* node_to_copy) noexcept(std::is_nothrow_copy_constructible<T_key>::value);
+    static void delete_tree(Node<T_key>* root) noexcept;
 
 public:
 
@@ -45,28 +45,28 @@ public:
     Node<T_key>& operator =(const Node<T_key>&) = delete;
     Node<T_key>& operator =(Node<T_key>&&) = delete;
 
-    /*std::strong_ordering operator <=>(const Node<T_key>& right_node){
+    /*auto operator <=>(const Node<T_key>& right_node){
 
         return node_key <=> right_node.node_key;
     }*/
 
-    bool operator <(const Node<T_key>& right_node) const noexcept{
+    bool operator <(const Node<T_key>& right_node) const{
 
         return node_key < right_node.node_key;
     }
-    bool operator <=(const Node<T_key>& right_node) const noexcept{
+    bool operator <=(const Node<T_key>& right_node) const{
 
         return node_key <= right_node.node_key;
     }
-    bool operator >(const Node<T_key>& right_node) const noexcept{
+    bool operator >(const Node<T_key>& right_node) const{
 
         return node_key > right_node.node_key;
     }
-    bool operator >=(const Node<T_key>& right_node) const noexcept{
+    bool operator >=(const Node<T_key>& right_node) const{
 
         return node_key >= right_node.node_key;
     }
-    bool operator ==(const Node<T_key>& right_node) const noexcept{
+    bool operator ==(const Node<T_key>& right_node) const{
 
         return node_key == right_node.node_key;
     }
@@ -138,18 +138,17 @@ class Splay_tree final{
     void left_zig_zag(Node<T_key>* cur_node) noexcept;
     void right_zig_zag(Node<T_key>* cur_node) noexcept;
 
-    void pull_node_up(Node<T_key>* cur_node);
-    Node<T_key>* find_nearest(T_key new_key) noexcept;
+    void pull_node_up(Node<T_key>* cur_node) noexcept;
+    Node<T_key>* find_nearest(T_key new_key);
     Node<T_key>* get_median(Node<T_key>& cur_left, T_key median);
 
-    bool check_sub_tree(Node<T_key>* cur_node) const noexcept;
+    bool check_sub_tree(Node<T_key>* cur_node) const;
 
     void delete_tree() noexcept;
-    void copy_tree() noexcept;
 
 public:
 
-    Splay_tree(){}
+    Splay_tree() = default;
     Splay_tree(const Splay_tree<T_key>& old_tree);
     Splay_tree(Splay_tree<T_key>&& rv_tree) noexcept;
     ~Splay_tree(){ delete_tree(); }
@@ -157,11 +156,11 @@ public:
     Splay_tree<T_key>& operator =(const Splay_tree<T_key>& old_tree);
     Splay_tree<T_key>& operator =(Splay_tree<T_key>&& rv_tree) noexcept;
 
-    bool check_tree() const noexcept;
+    bool check_tree() const;
 
     void add_new_elem(T_key new_elem);
-    bool find_elem(T_key elem) noexcept;
-    int number_of_elems(int from, int to) noexcept; 
+    bool find_elem(T_key elem);
+    int number_of_elems(T_key from, T_key to); 
     void dump_graphviz(const char* out_name) const;
 };
 
